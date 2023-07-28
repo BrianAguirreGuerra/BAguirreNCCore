@@ -244,7 +244,7 @@ namespace BL
             return result;
         }
 
-        //public static ML.Result ObtenerProducto()
+        //public static ML.Result ObtenerProductos()
         //{
         //    ML.Result result = new ML.Result();
         //    try
