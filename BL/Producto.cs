@@ -2,6 +2,7 @@
 using ML;
 using DL;
 using Microsoft.Data.SqlClient;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BL
 {
@@ -96,6 +97,7 @@ namespace BL
         //    return result;
         //}
 
+
         public static ML.Result ActualizarProducto(DL.Producto producto)
         {
             ML.Result result = new ML.Result();
@@ -171,9 +173,17 @@ namespace BL
                 {
                     var idParam = new SqlParameter("@IdProducto", idProducto);
 
-                    context.Database.ExecuteSqlRaw("EliminarProducto @IdProducto", idParam);
+                    int rowsAffected = context.Database.ExecuteSqlRaw("EliminarProducto @IdProducto", idParam);
 
-                    result.Correct = true;
+                    if (rowsAffected > 0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                        result.ErrorMessage = "No se pudo eliminar el producto con el ID especificado.";
+                    }
                 }
             }
             catch (Exception ex)
@@ -183,6 +193,7 @@ namespace BL
             }
             return result;
         }
+
 
         //public static ML.Result EliminarProducto(int idProducto)
         //{
