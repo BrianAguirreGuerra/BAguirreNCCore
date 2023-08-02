@@ -22,14 +22,12 @@
 
         <div class="form-group">
             <label>Precio Unitario:</label>
-            <input type="number" step="0.01" class="form-control" placeholder="Precio del producto"
-                   value="@Model.PrecioUnitario == 0 ? '' : Model.PrecioUnitario.ToString(" 0.00")" />
+            <input asp-for="PrecioUnitario" class="form-control" placeholder="Costo de producto" />
         </div>
 
         <div class="form-group">
             <label>Stock:</label>
-            <input type="number" class="form-control" placeholder="Cantidad en stock"
-                   value="@Model.Stock == 0 ? '' : Model.Stock.ToString()" />
+            <input asp-for="Stock" class="form-control" placeholder="Cantidad de productos" />
         </div>
 
         <div class="form-group">
@@ -44,13 +42,20 @@
         </div>
 
         <div class="form-group">
-            <label>Departamento:</label>
-            <select asp-for="IdDepartamento" class="form-control">
-                <option value="">Seleccione un departamento</option>
-                @foreach (var departamento in ViewBag.Departamentos)
+            <label>Área:</label>
+            <select id="ddlAreas" class="form-control">
+                <option value="">Seleccione un área</option>
+                @foreach (var area in ViewBag.Areas)
                 {
-                    <option value="@departamento.IdDepartamento">@departamento.Nombre</option>
+                    <option value="@area.IdArea">@area.Nombre</option>
                 }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Departamento:</label>
+            <select id="ddlDepartamentos" class="form-control">
+                <option value="">Seleccione un departamento</option>
             </select>
         </div>
 
@@ -64,3 +69,41 @@
     </form>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Al cambiar el área seleccionada, realizar una solicitud AJAX para obtener los departamentos correspondientes
+        $("#ddlAreas").change(function () {
+            var selectedAreaId = $("#ddlAreas").val(); // Corregir esta línea aquí
+            if (selectedAreaId !== "") {
+                $.ajax({
+                    url: "@Url.Action("ObtenerDepartamentosPorId", "Producto")",
+                    type: "GET",
+                    data: { areaId: selectedAreaId },
+                    dataType: "json",
+                    success: function (data) {
+                        // Limpiar el dropdownlist de departamentos
+                        $("#ddlDepartamentos").empty();
+
+                        // Agregar las opciones de departamentos en el dropdownlist
+                        if (data.length > 0) {
+                            $.each(data, function (index, departamento) {
+                                $("#ddlDepartamentos").append('<option value="' + departamento.IdDepartamento + '">' + departamento.Nombre + '</option>');
+                            });
+                        } else {
+                            $("#ddlDepartamentos").append('<option value="">No hay departamentos disponibles</option>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            } else {
+                // Si no se seleccionó un área, limpiar el dropdownlist de departamentos
+                $("#ddlDepartamentos").empty();
+                $("#ddlDepartamentos").append('<option value="">Seleccione un departamento</option>');
+            }
+        });
+    });
+</script>

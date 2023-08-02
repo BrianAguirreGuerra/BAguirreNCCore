@@ -29,5 +29,28 @@ namespace BL
             }
             return result;
         }
+
+        public static ML.Result ObtenerDepartamentosPorIdArea(int areaId)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL.BaguirreNcapasNetcoreContext context = new DL.BaguirreNcapasNetcoreContext())
+                {
+                    var departamentos = context.Departamentos.Where(d => d.IdArea == areaId).ToList();
+                    var departamentosObjeto = departamentos.Cast<object>().ToList();
+
+                    result.Correct = true;
+                    result.Objects = departamentosObjeto;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = "Ocurrió un problema: " + ex.Message;
+            }
+            return result;
+        }
+
     }
 }

@@ -65,11 +65,11 @@ namespace PL_MVC.Controllers
                 ViewBag.Proveedores = proveedores;
             }
 
-            ML.Result departamentosResult = BL.Departamento.ObtenerDepartamentos();
-            if (departamentosResult.Correct)
+            ML.Result areasResult = BL.Area.ObtenerAreas();
+            if (areasResult.Correct)
             {
-                List<DL.Departamento> departamentos = ((List<object>)departamentosResult.Objects).Cast<DL.Departamento>().ToList();
-                ViewBag.Departamentos = departamentos;
+                List<DL.Area> departamentos = ((List<object>)areasResult.Objects).Cast<DL.Area>().ToList();
+                ViewBag.Areas = departamentos;
             }
 
             return View(producto);
@@ -108,6 +108,20 @@ namespace PL_MVC.Controllers
                     return PartialView("Modal");
                     }
                 } 
+
+        }
+        public IActionResult ObtenerDepartamentosPorId(int areaId)
+        {
+            ML.Result result = BL.Departamento.ObtenerDepartamentosPorIdArea(areaId);
+            if (result.Correct)
+            {
+                List<DL.Departamento> departamentos = ((List<object>)result.Objects).Cast<DL.Departamento>().ToList();             
+                return Json(departamentos);
+            }
+            else
+            {
+                return Json(null);
+            }
         }
     }
 }
